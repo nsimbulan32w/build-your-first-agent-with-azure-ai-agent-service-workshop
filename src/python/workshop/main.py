@@ -45,10 +45,45 @@ utilities = Utilities()
 sales_data = SalesData(utilities)
 
 
+# project_client = AIProjectClient.from_connection_string(
+#     credential=DefaultAzureCredential(),
+#     conn_str=PROJECT_CONNECTION_STRING,
+# )
+
+
+# Replace with your project endpoint
+#"https://<your-project-host-name>.services.ai.azure.com/api/projects/<your-project-name>"
+
+# Replace with your credential (API key or managed identity)
+# Example using API key:
+# Example using managed identity:
+# credential = DefaultAzureCredential()
+
+# Create the AIProjectClient
+# project_client = AIProjectClient(
+#     project_endpoint=project_endpoint,
+#     credential=credential
+# )
+
+
+
+# Replace with your project endpoint
+
+#"https://<your-project-host-name>.services.ai.azure.com/api/projects/<your-project-name>"
+
+# Replace with your credential (API key or managed identity)
+# Example using API key:
+# azure_credential = AzureKeyCredential(api_credential)
+
+client_id = "UAI1"
+def_azure_credential = DefaultAzureCredential(managed_identity_client_id=client_id)
+
 project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
+    credential=def_azure_credential,
     conn_str=PROJECT_CONNECTION_STRING,
 )
+
+# project_client = AIProjectClient( endpoint=project_endpoint, credential=credential, subscription_id="Azure subscription 1d", resource_group_name="rg-nsimbulane2w-0579_ai", project_name="nsimbulane2w-9293")
 
 functions = AsyncFunctionTool(
     {
