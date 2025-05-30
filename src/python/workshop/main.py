@@ -75,7 +75,7 @@ sales_data = SalesData(utilities)
 # Example using API key:
 # azure_credential = AzureKeyCredential(api_credential)
 
-client_id = "UAI1"
+client_id = "983a8990-5ce9-491f-a705-3b4159359d23"
 def_azure_credential = DefaultAzureCredential(managed_identity_client_id=client_id)
 
 project_client = AIProjectClient.from_connection_string(
