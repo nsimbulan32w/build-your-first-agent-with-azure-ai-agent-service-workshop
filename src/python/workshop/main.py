@@ -92,8 +92,8 @@ functions = AsyncFunctionTool(
 )
 
 INSTRUCTIONS_FILE = "instructions/function_calling.txt"
-INSTRUCTIONS_FILE = "instructions/file_search.txt"
-INSTRUCTIONS_FILE = "instructions/code_interpreter.txt"
+# INSTRUCTIONS_FILE = "instructions/file_search.txt"
+# INSTRUCTIONS_FILE = "instructions/code_interpreter.txt"
 # INSTRUCTIONS_FILE = "instructions/bing_grounding.txt"
 # INSTRUCTIONS_FILE = "instructions/code_interpreter_multilingual.txt"
 
@@ -106,17 +106,17 @@ async def add_agent_tools() -> None:
     toolset.add(functions)
 
     # Add the tents data sheet to a new vector data store
-    vector_store = await utilities.create_vector_store(
-        project_client,
-        files=[TENTS_DATA_SHEET_FILE],
-        vector_store_name="Contoso Product Information Vector Store",
-    )
-    file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
-    toolset.add(file_search_tool)
+    # vector_store = await utilities.create_vector_store(
+    #     project_client,
+    #     files=[TENTS_DATA_SHEET_FILE],
+    #     vector_store_name="Contoso Product Information Vector Store",
+    # )
+    # file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
+    # toolset.add(file_search_tool)
 
     # Add the code interpreter tool
-    code_interpreter = CodeInterpreterTool()
-    toolset.add(code_interpreter)
+    # code_interpreter = CodeInterpreterTool()
+    # toolset.add(code_interpreter)
 
     # Add the Bing grounding tool
     # bing_connection = await project_client.connections.get(connection_name=BING_CONNECTION_NAME)
