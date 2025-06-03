@@ -8,3 +8,5 @@ pandas>=2.2.3, <3.0.0
 pydantic==2.10.1
 pillow>=11.1.0, <12.0.0
 openai
+streamlit-chat
+sqlite3
