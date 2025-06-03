@@ -25,7 +25,8 @@ import pandas as pd
 
 import streamlit as st
 from streamlit_chat import message
-
+import pandas as pd
+import pysqlite3 as sqlite3
 
 # ENV = dotenv.dotenv_values(".env")
 
@@ -321,8 +322,7 @@ INSTRUCTIONS_FILE = "instructions/code_interpreter.txt"
 
 
 
-import sqlite3
-import pandas as pd
+
 DATA_BASE = "database/contoso-sales.db"
 
 def db_connect():
