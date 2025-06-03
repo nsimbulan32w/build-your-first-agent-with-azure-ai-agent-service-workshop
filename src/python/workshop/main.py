@@ -7,10 +7,12 @@ from azure.ai.projects.models import (
     Agent,
     AgentThread,
     AsyncFunctionTool,
+    FunctionTool,
     AsyncToolSet,
     BingGroundingTool,
     CodeInterpreterTool,
     FileSearchTool,
+    ToolSet,
 )
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
@@ -45,10 +47,10 @@ utilities = Utilities()
 sales_data = SalesData(utilities)
 
 
-# project_client = AIProjectClient.from_connection_string(
-#     credential=DefaultAzureCredential(),
-#     conn_str=PROJECT_CONNECTION_STRING,
-# )
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(ExcludeInteractiveBrowserCredential =False ),
+    conn_str=PROJECT_CONNECTION_STRING,
+)
 
 
 # Replace with your project endpoint
@@ -78,10 +80,10 @@ sales_data = SalesData(utilities)
 client_id = "983a8990-5ce9-491f-a705-3b4159359d23"
 def_azure_credential = DefaultAzureCredential(managed_identity_client_id=client_id)
 
-project_client = AIProjectClient.from_connection_string(
-    credential=def_azure_credential,
-    conn_str=PROJECT_CONNECTION_STRING,
-)
+# project_client = AIProjectClient.from_connection_string(
+#     credential=def_azure_credential,
+#     conn_str=PROJECT_CONNECTION_STRING,
+# )
 
 # project_client = AIProjectClient( endpoint=project_endpoint, credential=credential, subscription_id="Azure subscription 1d", resource_group_name="rg-nsimbulane2w-0579_ai", project_name="nsimbulane2w-9293")
 
@@ -115,8 +117,8 @@ async def add_agent_tools() -> None:
     # toolset.add(file_search_tool)
 
     # Add the code interpreter tool
-    # code_interpreter = CodeInterpreterTool()
-    # toolset.add(code_interpreter)
+    code_interpreter = CodeInterpreterTool()
+    toolset.add(code_interpreter)
 
     # Add the Bing grounding tool
     # bing_connection = await project_client.connections.get(connection_name=BING_CONNECTION_NAME)
