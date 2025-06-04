@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Optional
 
-import aiosqlite
+import pysqlite3 as sqlite3
 import pandas as pd
 
 from terminal_colors import TerminalColors as tc
@@ -15,19 +15,19 @@ logger = logging.getLogger(__name__)
 
 
 class SalesData:
-    conn: Optional[aiosqlite.Connection]
+    conn: Optional[sqlite3.Connection]
 
     def __init__(self: "SalesData", utilities: Utilities) -> None:
         self.conn = None
         self.utilities = utilities
 
-    async def connect(self: "SalesData") -> None:
+    def connect(self: "SalesData") -> None:
         db_uri = f"file:{self.utilities.shared_files_path}/{DATA_BASE}?mode=ro"
 
         try:
-            self.conn = aiosqlite.connect(db_uri, uri=True)
+            self.conn = sqlite3.connect(db_uri, uri=True)
             logger.debug("Database connection opened.")
-        except aiosqlite.Error as e:
+        except sqlite3.Error as e:
             logger.exception("An error occurred", exc_info=e)
             self.conn = None
 
@@ -39,38 +39,49 @@ class SalesData:
     def _get_table_names(self: "SalesData") -> list:
         """Return a list of table names."""
         table_names = []
-        with self.conn.execute("SELECT name FROM sqlite_master WHERE type='table';") as tables:
-            return [table[0] for table in tables if table[0] != "sqlite_sequence"]
+        # with self.conn.execute("SELECT name FROM sqlite_master WHERE type='table';") as tables:
+        #     return [table[0] for table in tables if table[0] != "sqlite_sequence"]
+        
+        """Return a list of table names."""
+        tables = self.conn.execute("SELECT name FROM sqlite_master WHERE type='table';") 
+        table_names = [table[0] for table in tables if table[0] != "sqlite_sequence"] 
+        return table_names   
 
     def _get_column_info(self: "SalesData", table_name: str) -> list:
         """Return a list of tuples containing column names and their types."""
-        column_info = []
-        with self.conn.execute(f"PRAGMA table_info('{table_name}');") as columns:
-            # col[1] is the column name, col[2] is the column type
-            return [f"{col[1]}: {col[2]}" for col in columns]
+        # column_info = []
+        # with self.conn.execute(f"PRAGMA table_info('{table_name}');") as columns:
+        #     # col[1] is the column name, col[2] is the column type
+        #     return [f"{col[1]}: {col[2]}" for col in columns]
+        
+        column_names = []
+        columns = self.conn.execute(f"PRAGMA table_info('{table_name}');").fetchall()
+        for col in columns:
+            column_names.append(col[1])
+        return column_names
 
     def _get_regions(self: "SalesData") -> list:
         """Return a list of unique regions in the database."""
-        with self.conn.execute("SELECT DISTINCT region FROM sales_data;") as regions:
-            result = regions.fetchall()
+        result = self.conn.execute("SELECT DISTINCT region FROM sales_data").fetchall()
         return [region[0] for region in result]
+ 
 
     def _get_product_types(self: "SalesData") -> list:
         """Return a list of unique product types in the database."""
-        with self.conn.execute("SELECT DISTINCT product_type FROM sales_data;") as product_types:
-            result = product_types.fetchall()
+        product_types = self.conn.execute("SELECT DISTINCT product_type FROM sales_data;")
+        result = product_types.fetchall()
         return [product_type[0] for product_type in result]
 
     def _get_product_categories(self: "SalesData") -> list:
         """Return a list of unique product categories in the database."""
-        with self.conn.execute("SELECT DISTINCT main_category FROM sales_data;") as product_categories:
-            result = product_categories.fetchall()
+        product_categories = self.conn.execute("SELECT DISTINCT main_category FROM sales_data;") 
+        result = product_categories.fetchall()
         return [product_category[0] for product_category in result]
 
     def _get_reporting_years(self: "SalesData") -> list:
         """Return a list of unique reporting years in the database."""
-        with self.conn.execute("SELECT DISTINCT year FROM sales_data ORDER BY year;") as reporting_years:
-            result = reporting_years.fetchall()
+        reporting_years =  self.conn.execute("SELECT DISTINCT year FROM sales_data ORDER BY year;") 
+        result = reporting_years.fetchall()
         return [str(reporting_year[0]) for reporting_year in result]
 
     def get_database_info(self: "SalesData") -> str:
@@ -110,15 +121,18 @@ class SalesData:
         """
 
         print(
-            f"\n{tc.BLUE}Function Call Tools: async_fetch_sales_data_using_sqlite_query{tc.RESET}\n")
+            f"\n{tc.BLUE}Function Call Tools: fetch_sales_data_using_sqlite_query{tc.RESET}\n")
         print(f"{tc.BLUE}Executing query: {sqlite_query}{tc.RESET}\n")
 
         try:
             # Perform the query asynchronously
-            with self.conn.execute(sqlite_query) as cursor:
-                rows = cursor.fetchall()
-                columns = [description[0]
-                           for description in cursor.description]
+            cursor = self.conn.execute(sqlite_query)
+            # with conn.execute(sqlite_query) as cursor:
+            # with cursor:
+
+            rows = cursor.fetchall()
+            columns = [description[0]
+                        for description in cursor.description]
 
             if not rows:  # No need to create DataFrame if there are no rows
                 return json.dumps("The query returned no results. Try a different question.")
